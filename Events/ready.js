@@ -1,7 +1,9 @@
-module.exports = [{
-    name: 'ready',
-    once: true,
-    async execute(client) {
-        console.log(`Ready! Logged in as ${client.user.tag}`);
-        }
-    }];
+const { Events } = require('discord.js');
+
+module.exports = {
+	name: Events.ClientReady,
+	once: true,
+	execute(client) {
+		console.log(`Ready! Logged in as ${client.user.tag}`);
+	},
+};

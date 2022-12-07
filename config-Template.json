@@ -1,0 +1,14 @@
+{
+    "Bot": {
+        "TOKEN": "",
+        "ID": ""
+    },
+    "Guild": {
+        "ID": ""
+    },
+    "Server": {
+        "port": 25575,
+        "host": "",
+        "password": ""
+    }
+}
