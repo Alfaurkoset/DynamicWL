@@ -1,6 +1,8 @@
 // Require the necessary discord.js classes
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const { Client, IntentsBitField, Collection } = require('discord.js');
+const myIntents = new IntentsBitField();
+myIntents.add(IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMembers);
+const client = new Client({ intents: myIntents });
 const config = require('./config.json');
 require('./Utilities/deploy-commands');
 const fs = require('node:fs');
