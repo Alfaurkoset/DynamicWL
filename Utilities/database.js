@@ -29,11 +29,16 @@ async function addUser(DiscordUserID, MinecraftPlayer) {
 }
 
 async function updateUser(PlayerUUID) {
-	const newPlayerName = getPlayerNamebyID(PlayerUUID);
+	const newPlayerName = await getPlayerNamebyID(PlayerUUID);
+	const oldUser = await getUserbyUUID(PlayerUUID);
 	await prisma.minecraft_IGNs.update({
-		data: {
-			LatestName: newPlayerName,
-		},
+		where: { ID: oldUser.ID },
+		data: { LatestName: newPlayerName },
+	});
+}
+
+async function getUserbyUUID(PlayerUUID) {
+	return await prisma.minecraft_IGNs.findFirst({
 		where: {
 			PlayerUUID: PlayerUUID,
 		},
@@ -48,10 +53,15 @@ async function getUser(DiscordUserID) {
 	});
 }
 
+async function getAllUsers() {
+	return await prisma.minecraft_IGNs.findMany();
+}
+
 
 module.exports = {
 	prisma,
 	addUser,
 	getUser,
 	updateUser,
+	getAllUsers,
 };
