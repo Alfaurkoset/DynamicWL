@@ -3,16 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Minecraft_IGNs {
   id           Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
   LatestName   String   @db.VarChar(45)
   PlayerUUID   String   @db.LongText
-  AddedTime    DateTime @db.DateTime(0)
-  LatestUpdate DateTime @db.DateTime(0)
-
-  @@map("Minecraft IGNs")
+  DiscordID    String   @db.LongText
+  CreatedAT    DateTime @default(now())
+  UpdatedAt    DateTime @updatedAt
 }

@@ -1,10 +1,11 @@
 -- CreateTable
-CREATE TABLE `Minecraft IGNs` (
+CREATE TABLE `Minecraft_IGNs` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `LatestName` VARCHAR(45) NOT NULL,
     `PlayerUUID` LONGTEXT NOT NULL,
-    `AddedTime` DATETIME(0) NOT NULL,
-    `LatestUpdate` DATETIME(0) NOT NULL,
+    `DiscordID` LONGTEXT NOT NULL,
+    `CreatedAT` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `id_UNIQUE`(`id`),
     PRIMARY KEY (`id`)

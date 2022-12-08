@@ -1,5 +1,8 @@
+/* eslint-disable no-case-declarations */
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { getUser, addUser } = require('../Utilities/Database');
 const { getIDbyPlayerName, getPlayerNamebyID } = require('../Utilities/minecraft');
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -20,18 +23,33 @@ module.exports = {
 				.setDescription('Username or UUID of the user')
 				.setRequired(true)),
 	async execute(interaction) {
-		const client = interaction.client;
+		let minecraftPlayer = {};
+		if (getUser(interaction.user.id) == null) {
+			await interaction.reply({ content: 'you\'re been registered', ephemeral: true });
+			return;
+		}
+		async function errorHandler(Error) {
+			console.error(Error);
+			await interaction.reply({ content: 'something went wrong | maybe a typo?', ephemeral: true });
+		}
 		switch (interaction.options.getString('input-type')) {
 		case 'UUID':
-			console.log('UUID');
-			console.log('User: ', await getPlayerNamebyID(interaction.options.getString('username-uuid')));
+			minecraftPlayer = {
+				name: await getPlayerNamebyID(interaction.options.getString('username-uuid')).catch(error => errorHandler(error)),
+				id: interaction.options.getString('username-uuid'),
+			};
+			await addUser(interaction.user.id, minecraftPlayer);
+			await interaction.reply({ content: `User successfully registered with username of ${minecraftPlayer.name}`, ephemeral: true });
 			break;
 		case 'Username':
 			// eslint-disable-next-line no-case-declarations
-			const minecraftPlayer = await getIDbyPlayerName(interaction.options.getString('username-uuid')).catch(Error => {return Error;});
-			console.log(minecraftPlayer);
+			minecraftPlayer = {
+				name: interaction.options.getString('username-uuid'),
+				id: await getIDbyPlayerName(interaction.options.getString('username-uuid')).catch(error => errorHandler(error)),
+			};
+			await addUser(interaction.user.id, minecraftPlayer);
+			await interaction.reply({ content:`User successfully registered with username of ${minecraftPlayer.name}`, ephemeral: true });
 			break;
 		}
-		await interaction.reply('Hello!');
 	},
 };
