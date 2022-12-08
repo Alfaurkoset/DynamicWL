@@ -41,7 +41,7 @@ module.exports = {
 		switch (interaction.options.getString('input-type')) {
 		case 'UUID':
 			minecraftPlayer = {
-				name: await getPlayerNamebyID(interaction.options.getString('username-uuid')).then(uuid => toString(uuid)).catch(error => errorHandler(error)),
+				name: await getPlayerNamebyID(interaction.options.getString('username-uuid')).then(uuid => uuid).catch(error => errorHandler(error)),
 				id: interaction.options.getString('username-uuid'),
 			};
 			await addUser(interaction.user.id, minecraftPlayer);

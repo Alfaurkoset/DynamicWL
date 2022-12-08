@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-const { SlashCommandBuilder, PermissionFlagsBits, userMention } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { getUser, addUser, prisma } = require('../Utilities/Database');
 const { getPlayerNamebyID } = require('../Utilities/minecraft');
 
@@ -20,17 +20,18 @@ module.exports = {
 				.setRequired(true))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
 	async execute(interaction) {
+		const user = interaction.options.getMember('member');
+		const dbResult = await getUser(user.id).catch(async (e) => {
+			console.error(e);
+			await prisma.$disconnect();
+			process.exit(1);
+		});
 		let minecraftPlayer = {};
-		// if (getUser(interaction.options.getUser('member').id).then(async () => {
-		// 	await prisma.$disconnect();
-		// }).catch(async (e) => {
-		// 	console.error(e);
-		// 	await prisma.$disconnect();
-		// 	process.exit(1);
-		// }) != []) {
-		// 	await interaction.reply({ content: `${interaction.options.getUser('member')} is already registered`, ephemeral: true });
-		// 	return;
-		// }
+		console.log('DB Result: ', dbResult);
+		if (dbResult != null || dbResult != []) {
+			await interaction.reply({ content: `${interaction.options.getUser('member')} is already registered` });
+			return;
+		}
 		async function errorHandler(Error) {
 			console.error(Error);
 			await interaction.reply({ content: 'something went wrong | maybe a typo?', ephemeral: true });
