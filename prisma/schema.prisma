@@ -9,10 +9,10 @@ datasource db {
 }
 
 model Minecraft_IGNs {
-  id           Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  ID           Int      @id @default(autoincrement())
   LatestName   String   @db.VarChar(45)
   PlayerUUID   String   @db.LongText
   DiscordID    String   @db.LongText
-  CreatedAT    DateTime @default(now())
+  CreatedAt    DateTime @default(now())
   UpdatedAt    DateTime @updatedAt
 }

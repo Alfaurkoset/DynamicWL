@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { getUser, addUser } = require('../Utilities/Database');
+const { getUser, addUser, prisma } = require('../Utilities/Database');
 const { getIDbyPlayerName, getPlayerNamebyID } = require('../Utilities/minecraft');
 
 
@@ -13,8 +13,8 @@ module.exports = {
 				.setName('input-type')
 				.setDescription('Whitch type are you registering UUID or username [username]')
 				.addChoices(
-					{ name: 'UUID', value: 'UUID' },
 					{ name: 'Username', value: 'Username' },
+					{ name: 'UUID', value: 'UUID' },
 				)
 				.setRequired(true))
 		.addStringOption(option =>
@@ -24,7 +24,13 @@ module.exports = {
 				.setRequired(true)),
 	async execute(interaction) {
 		let minecraftPlayer = {};
-		if (getUser(interaction.user.id) == null) {
+		if (getUser(interaction.user.id).then(async () => {
+			await prisma.$disconnect();
+		}).catch(async (e) => {
+			console.error(e);
+			await prisma.$disconnect();
+			process.exit(1);
+		}) != []) {
 			await interaction.reply({ content: 'you\'re been registered', ephemeral: true });
 			return;
 		}
@@ -35,19 +41,24 @@ module.exports = {
 		switch (interaction.options.getString('input-type')) {
 		case 'UUID':
 			minecraftPlayer = {
-				name: await getPlayerNamebyID(interaction.options.getString('username-uuid')).catch(error => errorHandler(error)),
+				name: await getPlayerNamebyID(interaction.options.getString('username-uuid')).then(uuid => toString(uuid)).catch(error => errorHandler(error)),
 				id: interaction.options.getString('username-uuid'),
 			};
 			await addUser(interaction.user.id, minecraftPlayer);
 			await interaction.reply({ content: `User successfully registered with username of ${minecraftPlayer.name}`, ephemeral: true });
 			break;
 		case 'Username':
-			// eslint-disable-next-line no-case-declarations
 			minecraftPlayer = {
 				name: interaction.options.getString('username-uuid'),
 				id: await getIDbyPlayerName(interaction.options.getString('username-uuid')).catch(error => errorHandler(error)),
 			};
-			await addUser(interaction.user.id, minecraftPlayer);
+			addUser(interaction.user.id, minecraftPlayer).then(async () => {
+				await prisma.$disconnect();
+			}).catch(async (e) => {
+				console.error(e);
+				await prisma.$disconnect();
+				process.exit(1);
+			});
 			await interaction.reply({ content:`User successfully registered with username of ${minecraftPlayer.name}`, ephemeral: true });
 			break;
 		}

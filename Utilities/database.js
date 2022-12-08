@@ -3,12 +3,26 @@ const { getPlayerNamebyID } = require('./minecraft');
 
 const prisma = new PrismaClient();
 
+async function main() {
+	const allUsers = await prisma.minecraft_IGNs.findMany();
+	console.log(allUsers);
+}
+
+main().then(async () => {
+	await prisma.$disconnect();
+})
+	.catch(async (e) => {
+		console.error(e);
+		await prisma.$disconnect();
+		process.exit(1);
+	});
+
 async function addUser(DiscordUserID, MinecraftPlayer) {
 	// ... you will write your Prisma Client queries here
-	prisma.minecraft_IGNs.create({
+	await prisma.minecraft_IGNs.create({
 		data:  {
 			LatestName: MinecraftPlayer.name,
-			PlayerUUID: MinecraftPlayer.UUID,
+			PlayerUUID: MinecraftPlayer.id,
 			DiscordID: DiscordUserID,
 		},
 	});
@@ -16,7 +30,7 @@ async function addUser(DiscordUserID, MinecraftPlayer) {
 
 async function updateUser(PlayerUUID) {
 	const newPlayerName = getPlayerNamebyID(PlayerUUID);
-	prisma.minecraft_IGNs.update({
+	await prisma.minecraft_IGNs.update({
 		data: {
 			LatestName: newPlayerName,
 		},
@@ -27,7 +41,7 @@ async function updateUser(PlayerUUID) {
 }
 
 async function getUser(DiscordUserID) {
-	prisma.minecraft_IGNs.findFirst({
+	return await prisma.minecraft_IGNs.findFirst({
 		where: {
 			DiscordID: DiscordUserID,
 		},
@@ -36,6 +50,7 @@ async function getUser(DiscordUserID) {
 
 
 module.exports = {
+	prisma,
 	addUser,
 	getUser,
 	updateUser,
