@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-const { Client, IntentsBitField, Collection } = require('discord.js');
+const { Client, Collection, IntentsBitField } = require('discord.js');
 const myIntents = new IntentsBitField();
 myIntents.add(IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMembers);
 const client = new Client({ intents: myIntents });
@@ -7,6 +7,8 @@ const config = require('./config.json');
 require('./Utilities/deploy-commands');
 const fs = require('node:fs');
 const path = require('node:path');
+const { updateAllUserInformation } = require('./Utilities/minecraftPlayerUsernameUpdate');
+
 
 client.commands = new Collection();
 
@@ -38,6 +40,11 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => { event.execute(...args); });
 	}
 }
+
+setInterval(async () => {
+	console.log('User update');
+	await updateAllUserInformation();
+}, 60000);
 
 // Login to Discord with your client's token
 client.login(config.Bot.TOKEN);
