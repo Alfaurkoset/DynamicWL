@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const { Events } = require('discord.js');
-const { getUser } = require('../Utilities/Database');
+const { getUser } = require('../Utilities/database');
 const rconClient = require('../Utilities/rconHandler');
 
 module.exports = {

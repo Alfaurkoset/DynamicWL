@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { getUser, addUser, prisma } = require('../Utilities/Database');
+const { getUser, addUser, prisma } = require('../Utilities/database');
 const { getIDbyPlayerName, getPlayerNamebyID } = require('../Utilities/minecraft');
 
 

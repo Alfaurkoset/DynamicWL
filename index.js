@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-const { Client, Collection, IntentsBitField } = require('discord.js');
+const { Client, Collection, IntentsBitField, ActivityType } = require('discord.js');
 const myIntents = new IntentsBitField();
 myIntents.add(IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMembers);
 const client = new Client({ intents: myIntents });
@@ -47,4 +47,6 @@ setInterval(async () => {
 }, 60000);
 
 // Login to Discord with your client's token
-client.login(config.Bot.TOKEN);
+client.login(config.Bot.TOKEN).then(() => {
+	client.user.setActivity('Whitelist manager', { type: ActivityType.Playing });
+});

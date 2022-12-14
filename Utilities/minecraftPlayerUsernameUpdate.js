@@ -1,4 +1,4 @@
-const { getUser, prisma, getAllUsers, updateUser } = require('./Database');
+const { getUser, prisma, getAllUsers, updateUser } = require('./database');
 
 module.exports = {
 	async updateUserInformation(DiscordUserID) {
